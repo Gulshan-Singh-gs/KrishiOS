@@ -1,0 +1,61 @@
+name: Market Ingestion & Partitioning Pipeline
+
+on:
+  schedule:
+    # Daily at 02:00 UTC (07:30 IST) following Mandi closing auction reconciliation
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      targetDate:
+        description: 'Target Date (YYYY-MM-DD)'
+        required: false
+      regionFilter:
+        description: 'Specific Region Filter (e.g. Punjab, Haryana)'
+        required: false
+
+permissions:
+  contents: write
+  packages: read
+
+concurrency:
+  group: market-ingestion-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  ingest-and-partition:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        region: [punjab, haryana, rajasthan, madhya-pradesh, maharashtra]
+      fail-fast: false
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup Node.js & pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - name: Install Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Market Partition Processor
+        env:
+          REGION: ${{ matrix.region }}
+          TARGET_DATE: ${{ github.event.inputs.targetDate }}
+        run: |
+          pnpm --filter @krishios/shared build
+          node -e "console.log('Running market batch pipeline for region: ' + process.env.REGION)"
+
+      - name: Verify Schema Compliance
+        run: pnpm test
+

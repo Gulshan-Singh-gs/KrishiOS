@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.wrangler/
+.turbo/
+*.log
+.DS_Store
+Thumbs.db
+.env
+.env.local
+drizzle/
+

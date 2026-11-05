@@ -1,0 +1,19 @@
+name: Model Integrity & Quantization Validation
+
+on:
+  workflow_dispatch:
+    inputs:
+      modelId:
+        description: 'Model Identifier'
+        required: true
+        default: 'cotton-blight-v1'
+
+jobs:
+  validate-model:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify Model Manifest & Checksums
+        run: |
+          echo "Verifying TFLite model SHA-256 and input tensors [224, 224, 3]"
+

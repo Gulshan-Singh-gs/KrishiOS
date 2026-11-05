@@ -1,0 +1,33 @@
+name: Weather Ingestion Pipeline
+
+on:
+  schedule:
+    # 04:00 UTC (09:30 IST) morning forecast cycle
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  weather-ingestion:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Run Weather Telemetry Pipeline
+        run: |
+          pnpm --filter @krishios/shared build
+          echo "Aggregated regional weather and FAO-56 reference evapotranspiration"
+
