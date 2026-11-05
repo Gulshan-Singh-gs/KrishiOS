@@ -15,7 +15,7 @@
     "@capacitor/camera": "^7.0.0",
     "@capacitor/core": "^7.0.1",
     "@capacitor/geolocation": "^7.0.0",
-    "@capacitor/preferences": "^7.0.0",
+    "@capacitor/preferences": "^8.0.1",
     "@krishios/shared": "workspace:*",
     "@tensorflow/tfjs-core": "^4.22.0",
     "@tensorflow/tfjs-tflite": "^0.0.1-alpha.10",
